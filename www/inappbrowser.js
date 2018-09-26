@@ -88,7 +88,7 @@
         }
     };
 
-    module.exports = function (strUrl, strWindowName, strWindowFeatures, callbacks) {
+    module.exports = function (strUrl, strWindowName, strWindowFeatures,attachJson, callbacks) {
         // Don't catch calls that write to existing frames (e.g. named iframes).
         if (window.frames && window.frames[strWindowName]) {
             var origOpenFunc = modulemapper.getOriginalSymbol(window, 'open');
@@ -109,7 +109,7 @@
 
         strWindowFeatures = strWindowFeatures || '';
 
-        exec(cb, cb, 'InAppBrowser', 'open', [strUrl, strWindowName, strWindowFeatures]);
+        exec(cb, cb, 'InAppBrowser', 'open', [strUrl, strWindowName, strWindowFeatures,attachJson]);
         return iab;
     };
 })();
