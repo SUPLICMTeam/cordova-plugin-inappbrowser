@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
-
+ 
  http://www.apache.org/licenses/LICENSE-2.0
-
+ 
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -22,19 +22,26 @@
 #import <Cordova/CDVScreenOrientationDelegate.h>
 
 #ifdef __CORDOVA_4_0_0
-    #import <Cordova/CDVUIWebViewDelegate.h>
+#import <Cordova/CDVUIWebViewDelegate.h>
 #else
-    #import <Cordova/CDVWebViewDelegate.h>
+#import <Cordova/CDVWebViewDelegate.h>
 #endif
 
 @class CDVInAppBrowserViewController;
 
 @interface CDVInAppBrowser : CDVPlugin {
-  UIWindow * tmpWindow;
 }
 
 @property (nonatomic, retain) CDVInAppBrowserViewController* inAppBrowserViewController;
 @property (nonatomic, copy) NSString* callbackId;
+@property (nonatomic, copy) NSString* MobileOA_Title;
+@property (nonatomic, copy) NSString* MobileOA_Index;
+@property (nonatomic, copy) NSString* MobileOA_Data;
+@property (nonatomic) int attach_index;
+
+@property (nonatomic, copy) NSMutableArray* MobileOA_attach_name_arr;
+@property (nonatomic, copy) NSMutableArray* MobileOA_attach_url_arr;
+
 @property (nonatomic, copy) NSRegularExpression *callbackIdPattern;
 
 - (void)open:(CDVInvokedUrlCommand*)command;
@@ -76,18 +83,24 @@
 @end
 
 @interface CDVInAppBrowserViewController : UIViewController <UIWebViewDelegate, CDVScreenOrientationDelegate>{
-    @private
+@private
     NSString* _userAgent;
     NSString* _prevUserAgent;
+    NSMutableArray* _attach_name_arr;
+    NSMutableArray* _attach_url_arr;
     NSInteger _userAgentLockToken;
+    UIColor* _themeColor;
+    int _attach_index;
     CDVInAppBrowserOptions *_browserOptions;
-
+    
+    
+    
 #ifdef __CORDOVA_4_0_0
     CDVUIWebViewDelegate* _webViewDelegate;
 #else
     CDVWebViewDelegate* _webViewDelegate;
 #endif
-
+    
 }
 
 @property (nonatomic, strong) IBOutlet UIWebView* webView;
@@ -97,6 +110,12 @@
 @property (nonatomic, strong) IBOutlet UIBarButtonItem* forwardButton;
 @property (nonatomic, strong) IBOutlet UIActivityIndicatorView* spinner;
 @property (nonatomic, strong) IBOutlet UIToolbar* toolbar;
+
+@property (nonatomic, strong) IBOutlet UIScrollView* attachView;
+@property (nonatomic, strong) IBOutlet UIView* titleBar;
+@property (nonatomic, strong) IBOutlet UIButton* stopButton;
+
+
 
 @property (nonatomic, weak) id <CDVScreenOrientationDelegate> orientationDelegate;
 @property (nonatomic, weak) CDVInAppBrowser* navigationDelegate;
@@ -108,7 +127,7 @@
 - (void)showToolBar:(BOOL)show : (NSString *) toolbarPosition;
 - (void)setCloseButtonTitle:(NSString*)title : (NSString*) colorString;
 
-- (id)initWithUserAgent:(NSString*)userAgent prevUserAgent:(NSString*)prevUserAgent browserOptions: (CDVInAppBrowserOptions*) browserOptions;
+- (id)initWithUserAgent:(NSString*)userAgent prevUserAgent:(NSString*)prevUserAgent browserOptions: (CDVInAppBrowserOptions*) browserOptions attach_name_arr: (NSMutableArray*) attach_name_arr _attach_url_arr:(NSMutableArray*) attach_url_arr  _attach_index:(int) attach_index;
 
 @end
 
@@ -117,3 +136,5 @@
 @property (nonatomic, weak) id <CDVScreenOrientationDelegate> orientationDelegate;
 
 @end
+
+
