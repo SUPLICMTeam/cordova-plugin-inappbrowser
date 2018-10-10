@@ -21,6 +21,7 @@
 #import "YLEdgeLabel.h"
 #import <Cordova/CDVPluginResult.h>
 #import <Cordova/CDVUserAgentUtil.h>
+#include <sys/utsname.h>
 
 #define    kInAppBrowserTargetSelf @"_self"
 #define    kInAppBrowserTargetSystem @"_system"
@@ -774,9 +775,9 @@
     
     //关闭按钮
     int stopButtonY = 26;
-    if(getIs_iPhoneX()) {
+    if([self getIs_iPhoneX]) {
         stopButtonY = 46;
-    }
+    } 
     self.stopButton = [[UIButton alloc]initWithFrame:CGRectMake(self.attachView.frame.size.width*0.9, stopButtonY, 20, 20)];
     [self.stopButton setBackgroundImage:[UIImage imageNamed:@"close.png"] forState:UIControlStateNormal];
     [self.stopButton addTarget:self action:@selector(close) forControlEvents:UIControlEventTouchUpInside];
@@ -1302,20 +1303,6 @@
     
     return YES;
 }
-
-// 增加判断是否iPhone X的函数
-+(BOOL)getIs_iPhoneX{
-    struct utsname systemInfo;
-    uname(&systemInfo);
-    NSString *platform = [NSString stringWithCString: systemInfo.machine encoding:NSASCIIStringEncoding];
-     
-    if([platform isEqualToString:@"iPhone10,3"]||[platform isEqualToString:@"iPhone10,6"]) {
-        return YES;
-    }else{
-        return NO;
-    }
-}
-
 
 @end
 
