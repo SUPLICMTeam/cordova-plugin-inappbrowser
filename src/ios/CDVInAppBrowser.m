@@ -808,6 +808,19 @@
     
 }
 
+// 增加判断是否iPhone X的函数
+- (BOOL)getIs_iPhoneX {
+    struct utsname systemInfo;
+    uname(&systemInfo);
+    NSString *platform = [NSString stringWithCString: systemInfo.machine encoding:NSASCIIStringEncoding];
+    
+    if([platform isEqualToString:@"iPhone10,3"]||[platform isEqualToString:@"iPhone10,6"]) {
+        return YES;
+    }else{
+        return NO;
+    }
+}
+
 // 附件浮动条的点击事件
 - (void)labelTap:(UITapGestureRecognizer *)recognize {
     NSLog(@">>>>>>>>>>>>");
