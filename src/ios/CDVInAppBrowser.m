@@ -21,6 +21,7 @@
 #import "YLEdgeLabel.h"
 #import <Cordova/CDVPluginResult.h>
 #import <Cordova/CDVUserAgentUtil.h>
+#include <sys/utsname.h>
 
 #define    kInAppBrowserTargetSelf @"_self"
 #define    kInAppBrowserTargetSystem @"_system"
@@ -103,50 +104,56 @@
 {
     CDVPluginResult* pluginResult;
     
-    NSString* urlt = [command argumentAtIndex:0];
+    NSString* url = [command argumentAtIndex:0];
     
     ////    NSLog(@"%@",url);
     NSString* target = [command argumentAtIndex:1 withDefault:kInAppBrowserTargetSelf];
     //
     NSString* options = [command argumentAtIndex:2 withDefault:@"" andClass:[NSString class]];
     //
-    NSString* attachJson = [command argumentAtIndex:3 withDefault:@"" andClass:[NSString class]];
-    //
-    NSLog(@"InAppBrowser.m %@", attachJson);
-    NSDictionary *mData =[self dictionaryWithJsonString:attachJson];
+    NSString* attachJson = @"";
+    NSString *keyban = @"_blank";
+    if([target isEqualToString:keyban]){
+         attachJson=[command argumentAtIndex:3 withDefault:@"" andClass:[NSString class]];
+        //
+        NSLog(@"InAppBrowser.m %@", attachJson);
+        NSDictionary *mData =[self dictionaryWithJsonString:attachJson];
     
-    NSMutableArray* MobileOA_attach_name_arr_test= [[NSMutableArray alloc] initWithCapacity:0];
-    NSMutableArray* MobileOA_attach_url_arr_test= [[NSMutableArray alloc] initWithCapacity:0];
+        NSMutableArray* MobileOA_attach_name_arr_test= [[NSMutableArray alloc] initWithCapacity:0];
+        NSMutableArray* MobileOA_attach_url_arr_test= [[NSMutableArray alloc] initWithCapacity:0];
     
-    self.MobileOA_Title= mData[@"title"];
-    self.MobileOA_Index= mData[@"index"];
+        self.MobileOA_Title= mData[@"title"];
+        self.MobileOA_Index= mData[@"index"];
     
-    NSArray * MobileOA_Data_arr=mData[@"data"];
-    NSLog(@"MobileOA_Title %@", self.MobileOA_Title);
-    NSLog(@"MobileOA_Index %@", self.MobileOA_Index);
+        NSArray * MobileOA_Data_arr=mData[@"data"];
+        NSLog(@"MobileOA_Title %@", self.MobileOA_Title);
+        NSLog(@"MobileOA_Index %@", self.MobileOA_Index);
     
-    NSLog(@"array2 排序后 %@",MobileOA_Data_arr);
+        NSLog(@"array2 排序后 %@",MobileOA_Data_arr);
     
-    NSUInteger count = MobileOA_Data_arr.count;
+        NSUInteger count = MobileOA_Data_arr.count;
     
-    for (int i = 0; i<count; i++) {
-        NSDictionary* obj = MobileOA_Data_arr[i];
-        NSLog(@"MobileOA_attach_name_arr： %@",obj[@"attach_url"]);
-        NSLog(@"MobileOA_attach_url_arr： %@",obj[@"attach_name"]);
-        [MobileOA_attach_url_arr_test addObject:obj[@"attach_url"]];
-        [MobileOA_attach_name_arr_test addObject:obj[@"attach_name"]];
-        NSLog(@"MobileOA_attach_name_arr 数据： %@",MobileOA_attach_url_arr_test);
-        NSLog(@"MobileOA_attach_url_arr 数据： %@",MobileOA_attach_name_arr_test);
+        for (int i = 0; i<count; i++) {
+            NSDictionary* obj = MobileOA_Data_arr[i];
+            NSLog(@"MobileOA_attach_name_arr： %@",obj[@"attach_url"]);
+            NSLog(@"MobileOA_attach_url_arr： %@",obj[@"attach_name"]);
+            [MobileOA_attach_url_arr_test addObject:obj[@"attach_url"]];
+            [MobileOA_attach_name_arr_test addObject:obj[@"attach_name"]];
+            NSLog(@"MobileOA_attach_name_arr 数据： %@",MobileOA_attach_url_arr_test);
+            NSLog(@"MobileOA_attach_url_arr 数据： %@",MobileOA_attach_name_arr_test);
+        }
+    
+        self.MobileOA_attach_url_arr=MobileOA_attach_url_arr_test;
+    
+        self.MobileOA_attach_name_arr=MobileOA_attach_name_arr_test;
+        self.attach_index= [self.MobileOA_Index intValue];
+    
+        url =self.MobileOA_attach_url_arr[self.attach_index];
+        NSLog(@"MobileOA_attach_name_arr 数据1： %@",self.MobileOA_attach_url_arr);
+        NSLog(@"MobileOA_attach_url_arr 数据2： %@",self.MobileOA_attach_url_arr );
     }
     
-    self.MobileOA_attach_url_arr=MobileOA_attach_url_arr_test;
-    
-    self.MobileOA_attach_name_arr=MobileOA_attach_name_arr_test;
-    self.attach_index= [self.MobileOA_Index intValue];
-    
-    NSString* url =self.MobileOA_attach_url_arr[self.attach_index];
-    NSLog(@"MobileOA_attach_name_arr 数据1： %@",self.MobileOA_attach_url_arr);
-    NSLog(@"MobileOA_attach_url_arr 数据2： %@",self.MobileOA_attach_url_arr );
+
     
     self.callbackId = command.callbackId;
     
@@ -773,7 +780,11 @@
     
     
     //关闭按钮
-    self.stopButton = [[UIButton alloc]initWithFrame:CGRectMake(self.attachView.frame.size.width*0.9,26, 20, 20)];
+    int stopButtonY = 26;
+    if([self getIs_iPhoneX]) {
+        stopButtonY = 46;
+    }
+    self.stopButton = [[UIButton alloc]initWithFrame:CGRectMake(self.attachView.frame.size.width*0.9, stopButtonY, 20, 20)];
     [self.stopButton setBackgroundImage:[UIImage imageNamed:@"close.png"] forState:UIControlStateNormal];
     [self.stopButton addTarget:self action:@selector(close) forControlEvents:UIControlEventTouchUpInside];
     
@@ -801,6 +812,19 @@
     
     
     
+}
+
+// 增加判断是否iPhone X的函数
+- (BOOL)getIs_iPhoneX {
+    struct utsname systemInfo;
+    uname(&systemInfo);
+    NSString *platform = [NSString stringWithCString: systemInfo.machine encoding:NSASCIIStringEncoding];
+    
+    if([platform isEqualToString:@"iPhone10,3"]||[platform isEqualToString:@"iPhone10,6"]) {
+        return YES;
+    }else{
+        return NO;
+    }
 }
 
 // 附件浮动条的点击事件
@@ -1298,7 +1322,6 @@
     
     return YES;
 }
-
 
 @end
 
