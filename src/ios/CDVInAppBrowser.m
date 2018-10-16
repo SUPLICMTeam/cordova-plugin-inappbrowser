@@ -783,7 +783,7 @@
     int stopButtonY = 26;
     if([self getIs_iPhoneX]) {
         stopButtonY = 46;
-    }
+    } 
     self.stopButton = [[UIButton alloc]initWithFrame:CGRectMake(self.attachView.frame.size.width*0.9, stopButtonY, 20, 20)];
     [self.stopButton setBackgroundImage:[UIImage imageNamed:@"close.png"] forState:UIControlStateNormal];
     [self.stopButton addTarget:self action:@selector(close) forControlEvents:UIControlEventTouchUpInside];
